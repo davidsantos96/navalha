@@ -1,0 +1,9 @@
+{
+  "name": "navalha",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "test": "npm run test -w @navalha/agenda-inteligente",
+    "mobile": "npm run start -w mobile"
+  }
+}
