@@ -46,11 +46,18 @@ export function dataCurtaDeISO(iso: string): string {
   return `${dia} ${MESES[mes - 1]}`;
 }
 
-/** ISO timestamptz (sem timezone explícito, hora local) a partir de "YYYY-MM-DD" + minutos desde 00:00. */
+/**
+ * ISO timestamptz a partir de "YYYY-MM-DD" + minutos desde 00:00, no fuso
+ * local do dispositivo. Precisa construir um Date com componentes locais
+ * (não uma string sem offset) — senão o Postgres/PostgREST assume UTC e o
+ * horário salvo fica deslocado pelo fuso (ex.: 09:00 local vira 09:00 UTC
+ * = 06:00 em São Paulo, aparecendo antes do expediente abrir).
+ */
 export function minutosParaISO(dataISO: string, minutos: number): string {
-  const h = String(Math.floor(minutos / 60)).padStart(2, "0");
-  const m = String(minutos % 60).padStart(2, "0");
-  return `${dataISO}T${h}:${m}:00`;
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return new Date(ano, mes - 1, dia, h, m, 0, 0).toISOString();
 }
 
 /** Offset (dias a partir de hoje) correspondente a uma data "YYYY-MM-DD", dentro de um horizonte de busca. */

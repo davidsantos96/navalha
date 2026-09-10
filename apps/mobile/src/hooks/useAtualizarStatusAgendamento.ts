@@ -18,6 +18,7 @@ export function useAtualizarStatusAgendamento() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["agenda-dia"] });
       queryClient.invalidateQueries({ queryKey: ["retornos"] });
+      queryClient.invalidateQueries({ queryKey: ["faturamento"] });
     },
   });
 }

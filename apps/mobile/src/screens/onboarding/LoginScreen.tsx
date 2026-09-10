@@ -77,7 +77,7 @@ export function LoginScreen() {
               />
               <MensagemErro texto={erro} />
               <BotaoPrimario texto="Receber código de acesso" onPress={enviarCodigo} carregando={carregando} style={{ marginTop: 10 }} />
-              <Text style={s.nota}>Sem senha para decorar — você recebe um código de 6 dígitos no e-mail e pronto.</Text>
+              <Text style={s.nota}>Sem senha para decorar — você recebe um código no e-mail e pronto.</Text>
             </View>
           ) : (
             <View style={{ marginTop: 32 }}>
@@ -86,12 +86,12 @@ export function LoginScreen() {
               </Text>
               <TextInput
                 style={s.inputCodigo}
-                placeholder="······"
+                placeholder="········"
                 placeholderTextColor="#7E8DB0"
                 keyboardType="number-pad"
-                maxLength={6}
+                maxLength={10}
                 value={codigo}
-                onChangeText={(v) => setCodigo(v.replace(/\D/g, "").slice(0, 6))}
+                onChangeText={(v) => setCodigo(v.replace(/\D/g, "").slice(0, 10))}
               />
               <MensagemErro texto={erro} />
               <BotaoPrimario texto="Entrar" onPress={confirmarCodigo} carregando={carregando} style={{ marginTop: 10 }} />
@@ -134,8 +134,8 @@ const s = StyleSheet.create({
     backgroundColor: "#1D2C4F",
     color: "#fff",
     fontFamily: fontes.titulo,
-    fontSize: 30,
-    letterSpacing: 12,
+    fontSize: 26,
+    letterSpacing: 6,
     textAlign: "center",
   },
   nota: { fontSize: 12.5, color: "#7E8DB0", marginTop: 12, lineHeight: 18 },

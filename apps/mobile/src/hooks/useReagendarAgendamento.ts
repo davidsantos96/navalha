@@ -26,6 +26,7 @@ export function useReagendarAgendamento() {
       queryClient.invalidateQueries({ queryKey: ["agenda-dia"] });
       queryClient.invalidateQueries({ queryKey: ["sugestoes"] });
       queryClient.invalidateQueries({ queryKey: ["retornos"] });
+      queryClient.invalidateQueries({ queryKey: ["faturamento"] });
     },
   });
 }
