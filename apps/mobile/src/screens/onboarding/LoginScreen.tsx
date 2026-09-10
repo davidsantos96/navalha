@@ -55,7 +55,7 @@ export function LoginScreen() {
 
   return (
     <View style={s.tela}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <View style={s.corpo}>
           <Pole />
           <Text style={s.marca}>NAVALHA</Text>

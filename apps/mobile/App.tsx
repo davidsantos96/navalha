@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
-import { SafeAreaView, StatusBar, View, ActivityIndicator } from "react-native";
+import { StatusBar, View, ActivityIndicator } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import {
   useFonts as useFontesBricolage,
@@ -70,11 +71,13 @@ export default function App() {
   if (!pronto) return null;
 
   return (
-    <QueryClientProvider client={qc}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: cores.fundo }} onLayout={aoLayoutRaiz}>
-        <StatusBar barStyle="dark-content" />
-        <Raiz />
-      </SafeAreaView>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={qc}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: cores.fundo }} onLayout={aoLayoutRaiz}>
+          <StatusBar barStyle="dark-content" />
+          <Raiz />
+        </SafeAreaView>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
