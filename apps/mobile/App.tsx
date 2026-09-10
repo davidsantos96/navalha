@@ -1,6 +1,6 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
-import { StatusBar, View, ActivityIndicator } from "react-native";
+import { StatusBar } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import {
@@ -18,6 +18,7 @@ import {
 import { AppShell } from "./src/navigation/AppShell";
 import { LoginScreen } from "./src/screens/onboarding/LoginScreen";
 import { OnboardingScreen } from "./src/screens/onboarding/OnboardingScreen";
+import { TelaCarregamento } from "./src/components/TelaCarregamento";
 import { useAuth } from "./src/hooks/useAuth";
 import { useProfissional } from "./src/hooks/useProfissional";
 import { cores } from "./src/theme";
@@ -26,22 +27,14 @@ const qc = new QueryClient();
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-function Carregando() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator color={cores.vermelho} size="large" />
-    </View>
-  );
-}
-
 function Raiz() {
   const { session, carregando: carregandoAuth } = useAuth();
   const profissional = useProfissional(session?.user.id);
   const queryClient = useQueryClient();
 
-  if (carregandoAuth) return <Carregando />;
+  if (carregandoAuth) return <TelaCarregamento />;
   if (!session) return <LoginScreen />;
-  if (profissional.isLoading) return <Carregando />;
+  if (profissional.isLoading) return <TelaCarregamento />;
 
   if (!profissional.data) {
     return (
@@ -64,18 +57,19 @@ export default function App() {
   });
   const pronto = bricolageCarregada && figtreeCarregada;
 
-  const aoLayoutRaiz = useCallback(async () => {
-    if (pronto) await SplashScreen.hideAsync();
+  // Esconde o splash nativo assim que a 1ª tela em JS (a própria
+  // TelaCarregamento, mesma marca do splash) já está desenhada — antes
+  // disso o app renderiza `null` e o onLayout nunca dispararia.
+  useEffect(() => {
+    if (pronto) SplashScreen.hideAsync().catch(() => {});
   }, [pronto]);
-
-  if (!pronto) return null;
 
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={qc}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: cores.fundo }} onLayout={aoLayoutRaiz}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: cores.fundo }}>
           <StatusBar barStyle="dark-content" />
-          <Raiz />
+          {pronto ? <Raiz /> : <TelaCarregamento />}
         </SafeAreaView>
       </QueryClientProvider>
     </SafeAreaProvider>
