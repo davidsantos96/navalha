@@ -34,8 +34,8 @@ npm test        # 12 testes do algoritmo devem passar
 ### 2. Criar o backend
 
 1. Crie um projeto no Supabase.
-2. No SQL Editor, execute `supabase/migrations/0001_schema_inicial.sql`.
-3. Em Authentication → Providers, habilite **Email** (link mágico). Telefone/OTP fica para depois (tem custo de SMS).
+2. No SQL Editor, execute as migrações de `supabase/migrations/` **em ordem** (0001 a 0007).
+3. Em Authentication → Providers, habilite **Email** (link mágico) e customize o template "Magic Link" para incluir `{{ .Token }}` (por padrão só vem um link, sem código de 6 dígitos). Telefone/OTP fica para depois (tem custo de SMS).
 
 ### 3. Completar o app Expo
 
@@ -78,13 +78,25 @@ npm run mobile     # abre o Expo; escaneie o QR com o Expo Go
 
 ## O que já está pronto vs. o que falta
 
-| Pronto | Falta (ordem sugerida na spec §2.2) |
-|--------|--------------------------------------|
-| Motor de sugestão testado (12 testes) | Onboarding (F1) |
-| Schema com RLS multi-tenant e constraint anti-conflito | Linha do tempo da agenda (F2) — referência visual: `prototipo-barbearia.html` |
-| Tokens de design (`src/theme.ts`) | Fluxo turbo (F3) usando `useSugestoes` |
-| Helpers de WhatsApp (`src/lib/whatsapp.ts`) | Retornos (F6) — a view `retornos` já existe no banco |
-| Hook `useSugestoes` (banco → algoritmo no aparelho) | Bloqueios (F9), reencaixe (F7), painel (F8) |
+Refino visual completo (branch `refino-visual-telas`): todas as telas do MVP
+(F1–F9) implementadas contra os hooks reais, com a identidade visual do
+protótipo (Bricolage Grotesque + Figtree, paleta do poste, linha do tempo
+hachurada). Falta essencialmente validar contra um projeto Supabase real e
+rodar num aparelho.
+
+| Pronto | Observação |
+|--------|------------|
+| Motor de sugestão testado (13 testes) | `packages/agenda-inteligente` — `maxPorDia` configurável (novo) |
+| Schema com RLS multi-tenant, constraint anti-conflito, bloqueios, reencaixe, faturamento | migrações 0001–0007 (0006/0007 novas: contato da barbearia, exclusão de conta) |
+| Onboarding (F1), Login | restilizados, mesma lógica/RPC de antes |
+| Agenda do dia (F2) | linha do tempo, ocupação, buracos mortos, faturamento, sheet de ações |
+| Fluxo turbo (F3/F4) + Reagendar | `Turbo1Cliente` → `Turbo2Servico` → `Turbo3Sugestoes` → `TurboConfirmar` |
+| Retornos (F6) | `RetornosScreen`, WhatsApp com melhores horários calculados na hora |
+| Reencaixe pós-cancelamento (F7) | dica no sheet ao cancelar, se houver cliente de retorno compatível |
+| Painel de faturamento (F8) | tela dedicada (por dia / por serviço), além dos cards da Agenda |
+| Bloqueios (F9) | `ConfigBloqueiosScreen` |
+| Configurações completas | Perfil (+ excluir conta), Barbearia, Serviços (CRUD), Horários, Algoritmo, Ajuda |
+| Navegação | pilha local simples (`src/navigation/AppShell.tsx`) — sem lib de rotas nova |
 
 ## Distribuição do piloto
 

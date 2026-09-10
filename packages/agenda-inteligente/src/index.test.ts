@@ -110,6 +110,15 @@ describe("sugerirHorarios — regras de ouro", () => {
     for (const n of porDia.values()) expect(n).toBeLessThanOrEqual(2);
   });
 
+  it("maxPorDia levanta o teto de diversidade — útil pra ver todos os horários de UM dia", () => {
+    // Expediente de 09h-19h (menos almoço), serviço de 30 min: bem mais de
+    // 2 bordas de encaixe possíveis num único dia vazio.
+    const d = dia("2026-09-08", []);
+    const sugs = sugerirHorarios([d], { duracaoServico: 30, menorServico: 30, maxSugestoes: 12, maxPorDia: 12 });
+    expect(sugs.length).toBeGreaterThan(2);
+    expect(sugs.every((s) => s.data === "2026-09-08")).toBe(true);
+  });
+
   it("oferece buraco morto com aviso quando é a única opção", () => {
     // Único espaço: 45 min -> serviço de 30 deixa 15 = morto, mas deve aparecer marcado
     const d: DiaAgenda = {
