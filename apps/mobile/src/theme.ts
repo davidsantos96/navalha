@@ -7,6 +7,8 @@ export const cores = {
   fraco: "#8B93A3",
   vermelho: "#C8362E",
   vermelhoSuave: "#FBEDEC",
+  azul: "#2563EB",
+  azulSuave: "#E5EDFC",
   verde: "#1E7A4F",
   verdeSuave: "#E8F4EE",
   ambar: "#A66A0C",

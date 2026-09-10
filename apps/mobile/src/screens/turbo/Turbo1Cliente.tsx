@@ -51,7 +51,7 @@ export function Turbo1ClienteScreen({
       <ScrollView contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
         <TextInput style={s.input} placeholder="Nome ou telefone" placeholderTextColor={cores.fraco} value={busca} onChangeText={setBusca} />
 
-        {clientes.isFetching && busca.trim().length > 0 && <ActivityIndicator color={cores.vermelho} style={{ marginTop: 16 }} />}
+        {clientes.isFetching && busca.trim().length > 0 && <ActivityIndicator color={cores.azul} style={{ marginTop: 16 }} />}
 
         {busca.trim().length === 0 ? (
           <Text style={s.vazio}>Digite para buscar por nome ou telefone.</Text>
@@ -105,7 +105,7 @@ const s = StyleSheet.create({
   novoCartao: { backgroundColor: cores.card, borderWidth: 1.5, borderColor: "#C6CCD4", borderStyle: "dashed", borderRadius: raio.card, padding: 14, marginTop: 16 },
   novoTitulo: { fontFamily: fontes.corpoNegrito, fontSize: 14, color: cores.tinta, marginBottom: 10 },
   inputInterno: { width: "100%", padding: 12, borderRadius: 12, borderWidth: 1.5, borderColor: cores.linha, backgroundColor: "#FAFBFC", fontSize: 15, color: cores.tinta, marginBottom: 8 },
-  salvarBotao: { width: "100%", paddingVertical: 14, borderRadius: 12, backgroundColor: cores.vermelho, alignItems: "center" },
+  salvarBotao: { width: "100%", paddingVertical: 14, borderRadius: 12, backgroundColor: cores.azul, alignItems: "center" },
   salvarTexto: { color: "#fff", fontFamily: fontes.corpoNegrito, fontSize: 15 },
   link: { color: cores.tinta, fontFamily: fontes.corpoNegrito, fontSize: 14, textDecorationLine: "underline" },
   erro: { color: cores.vermelho, marginBottom: 8, fontFamily: fontes.corpoMedio },

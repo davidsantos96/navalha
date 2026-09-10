@@ -49,9 +49,9 @@ export function FaturamentoScreen({ profissional, nav }: { profissional: Profiss
             const hoje = d.diaSemana === hojeSemana;
             return (
               <View key={d.diaSemana} style={s.diaLinha}>
-                <Text style={[s.diaLabel, hoje && { color: cores.vermelho, fontFamily: fontes.corpoNegrito }]}>{hoje ? "Hoje" : NOMES_DIAS[d.diaSemana]}</Text>
+                <Text style={[s.diaLabel, hoje && { color: cores.azul, fontFamily: fontes.corpoNegrito }]}>{hoje ? "Hoje" : NOMES_DIAS[d.diaSemana]}</Text>
                 <View style={s.diaBarraFundo}>
-                  <View style={[s.diaBarraPreenchida, { backgroundColor: hoje ? cores.vermelho : cores.tinta, width: `${Math.max((d.totalCentavos / maxDia) * 100, d.totalCentavos ? 4 : 0)}%` }]} />
+                  <View style={[s.diaBarraPreenchida, { backgroundColor: hoje ? cores.azul : cores.tinta, width: `${Math.max((d.totalCentavos / maxDia) * 100, d.totalCentavos ? 4 : 0)}%` }]} />
                 </View>
                 <Text style={[s.diaValor, { color: d.totalCentavos ? cores.tinta : cores.fraco }]}>{d.totalCentavos ? formatarCentavos(d.totalCentavos) : "—"}</Text>
               </View>

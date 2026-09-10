@@ -158,9 +158,9 @@ export function OnboardingScreen({ onConcluido }: { onConcluido: () => void }) {
       <ScreenHeader titulo={TITULOS[passo]} onVoltar={passo > 0 ? () => setPasso((p) => p - 1) : undefined} />
       <Text style={s.passoTxt}>PASSO {passo + 1} DE 3</Text>
       <View style={s.dots}>
-        <View style={[s.dot, { backgroundColor: cores.vermelho }]} />
-        <View style={[s.dot, { backgroundColor: passo >= 1 ? cores.vermelho : "#DDE1E6" }]} />
-        <View style={[s.dot, { backgroundColor: passo >= 2 ? cores.vermelho : "#DDE1E6" }]} />
+        <View style={[s.dot, { backgroundColor: cores.azul }]} />
+        <View style={[s.dot, { backgroundColor: passo >= 1 ? cores.azul : "#DDE1E6" }]} />
+        <View style={[s.dot, { backgroundColor: passo >= 2 ? cores.azul : "#DDE1E6" }]} />
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
@@ -242,7 +242,7 @@ export function OnboardingScreen({ onConcluido }: { onConcluido: () => void }) {
 
 const s = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cores.fundo },
-  passoTxt: { fontSize: 11.5, fontFamily: fontes.corpoNegrito, color: cores.vermelho, letterSpacing: 1, marginLeft: 20, marginTop: -4 },
+  passoTxt: { fontSize: 11.5, fontFamily: fontes.corpoNegrito, color: cores.azul, letterSpacing: 1, marginLeft: 20, marginTop: -4 },
   dots: { flexDirection: "row", gap: 5, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 12 },
   dot: { flex: 1, height: 4, borderRadius: raio.pilula },
   conteudo: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 20 },

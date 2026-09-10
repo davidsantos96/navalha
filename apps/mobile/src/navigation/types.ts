@@ -37,6 +37,13 @@ export interface TurboState {
   filtroPeriodo: Periodo;
   diaSelecionadoOffset: number | null;
   incluirBuracoMorto: boolean;
+  /**
+   * Preenchido quando o fluxo começou por um toque num horário livre da
+   * agenda (em vez do botão "+"). Nesse caso o horário já está decidido —
+   * o passo 3 (Melhores encaixes) é pulado assim que o serviço é
+   * escolhido, direto pra confirmação.
+   */
+  horarioForcado: { data: string; inicio: number } | null;
 }
 
 export const turboVazio: TurboState = {
@@ -52,6 +59,7 @@ export const turboVazio: TurboState = {
   filtroPeriodo: "todos",
   diaSelecionadoOffset: null,
   incluirBuracoMorto: false,
+  horarioForcado: null,
 };
 
 export interface Navegacao {

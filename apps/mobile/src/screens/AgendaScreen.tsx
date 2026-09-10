@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { minParaHora } from "@navalha/agenda-inteligente";
@@ -42,6 +42,7 @@ export function AgendaScreen({
   onReagendar,
   onAbrirFaturamento,
   onAbrirConfig,
+  onTocarHorario,
 }: {
   profissional: Profissional;
   offsetDia: number;
@@ -49,8 +50,10 @@ export function AgendaScreen({
   onReagendar: (payload: ReagendarPayload) => void;
   onAbrirFaturamento: () => void;
   onAbrirConfig: () => void;
+  onTocarHorario: (data: string, minutos: number) => void;
 }) {
   const [itemSelecionado, setItemSelecionado] = useState<ItemAgenda | null>(null);
+  const timelineRef = useRef<View>(null);
   const data = dataISODoOffset(offsetDia);
   const agenda = useAgendaDoDia(profissional.id, data);
   const expedientes = useExpedientes(profissional.id);
@@ -105,6 +108,34 @@ export function AgendaScreen({
       servicoNome: item.servicoNome,
       servicoDuracaoMin: servico?.duracaoMin ?? null,
       servicoPrecoCentavos: servico?.precoCentavos ?? null,
+    });
+  }
+
+  /**
+   * Toque num trecho vazio da timeline abre o fluxo de agendamento já com
+   * o horário decidido. Só "pega" o toque se o ponto cai dentro de um
+   * espaço livre de verdade (fora do expediente, intervalo e horários já
+   * ocupados ficam de fora automaticamente — os blocos desses itens têm
+   * seu próprio Pressable por cima e capturam o toque primeiro).
+   */
+  function aoTocarNaLinha(yLocal: number) {
+    const espacos = agenda.data?.espacosLivres ?? [];
+    const bruto = abre + yLocal / ZOOM;
+    const livre = espacos.find((sp) => bruto >= sp.inicio && bruto < sp.fim);
+    if (!livre) return;
+    const arredondado = Math.round(bruto / 15) * 15;
+    const minutos = Math.min(Math.max(arredondado, livre.inicio), livre.fim - 1);
+    onTocarHorario(data, minutos);
+  }
+
+  /**
+   * `nativeEvent.locationY` do Pressable não vem preenchido no web (RN Web
+   * só popula `pageY`) — mede a posição da timeline na tela e subtrai do
+   * toque pra achar o Y local, funciona nas duas plataformas.
+   */
+  function aoPressionarTimeline(pageY: number) {
+    timelineRef.current?.measure((_x, _y, _w, _h, _pageX, pageYDaTimeline) => {
+      aoTocarNaLinha(pageY - pageYDaTimeline);
     });
   }
 
@@ -174,7 +205,11 @@ export function AgendaScreen({
         </View>
       ) : (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 6, paddingBottom: 120 }}>
-          <View style={{ position: "relative", marginLeft: 44, height: (fecha - abre) * ZOOM + 30 }}>
+          <Pressable
+            ref={timelineRef}
+            style={{ position: "relative", marginLeft: 44, height: (fecha - abre) * ZOOM + 30 }}
+            onPress={(e) => aoPressionarTimeline(e.nativeEvent.pageY)}
+          >
             {gridHoras.map((h) => (
               <View key={h}>
                 <View style={[s.gridLinha, { top: Y(h) }]} />
@@ -238,7 +273,7 @@ export function AgendaScreen({
                 <Text style={s.blocoTextoVermelho}>⚠ Buraco de {b.minutos} min</Text>
               </Hachura>
             ))}
-          </View>
+          </Pressable>
         </ScrollView>
       )}
 

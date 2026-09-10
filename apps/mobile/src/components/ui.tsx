@@ -42,7 +42,7 @@ export function BotaoPrimario({
   carregando?: boolean;
 }) {
   return (
-    <Pressable onPress={onPress} disabled={disabled || carregando} style={[s.botaoBase, { backgroundColor: cores.vermelho, opacity: disabled ? 0.5 : 1 }, style]}>
+    <Pressable onPress={onPress} disabled={disabled || carregando} style={[s.botaoBase, { backgroundColor: cores.azul, opacity: disabled ? 0.5 : 1 }, style]}>
       {carregando ? <ActivityIndicator color="#fff" /> : <Text style={s.botaoTextoClaro}>{texto}</Text>}
     </Pressable>
   );
@@ -91,7 +91,7 @@ export function Interruptor({ ativo, onToggle }: { ativo: boolean; onToggle: () 
 export function Carregando() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator color={cores.vermelho} size="large" />
+      <ActivityIndicator color={cores.azul} size="large" />
     </View>
   );
 }
