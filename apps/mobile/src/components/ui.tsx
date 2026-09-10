@@ -101,6 +101,15 @@ export function MensagemErro({ texto }: { texto: string | null }) {
   return <Text style={s.erro}>{texto}</Text>;
 }
 
+export function MensagemSucesso({ texto }: { texto: string | null }) {
+  if (!texto) return null;
+  return (
+    <View style={s.sucessoCartao}>
+      <Text style={s.sucessoTexto}>✓ {texto}</Text>
+    </View>
+  );
+}
+
 const s = StyleSheet.create({
   voltar: { width: 38, height: 38, borderRadius: 12, borderWidth: 1, borderColor: cores.linha, backgroundColor: cores.card, alignItems: "center", justifyContent: "center" },
   header: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
@@ -118,4 +127,6 @@ const s = StyleSheet.create({
   sw: { width: 46, height: 26, borderRadius: raio.pilula, padding: 2, flexDirection: "row" },
   kn: { width: 22, height: 22, borderRadius: raio.pilula, backgroundColor: "#fff" },
   erro: { color: cores.vermelho, marginBottom: 8, fontFamily: fontes.corpoMedio },
+  sucessoCartao: { backgroundColor: cores.verdeSuave, borderWidth: 1, borderColor: "#BFE0CE", borderRadius: raio.card, padding: 12, marginBottom: 8 },
+  sucessoTexto: { color: cores.verde, fontFamily: fontes.corpoSemi, fontSize: 13.5 },
 });

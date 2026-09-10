@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Platform, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { Modal, Platform, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { cores, fontes, raio } from "../theme";
 import { BotaoPrimario } from "./ui";
@@ -80,21 +80,42 @@ export function ExpedienteEditor({
         </View>
       ))}
 
-      {picker && blocoSelecionado && (
-        <View style={s.pickerCaixa}>
-          <DateTimePicker
-            value={minParaData(blocoSelecionado[picker.campo])}
-            mode="time"
-            is24Hour
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            onChange={(_evento, valor) => {
-              if (Platform.OS !== "ios") setPicker(null);
-              if (valor) onAtualizarBloco(picker.diaSemana, picker.indice, picker.campo, dataParaMin(valor));
-            }}
-          />
-          {Platform.OS === "ios" && <BotaoPrimario texto="Pronto" onPress={() => setPicker(null)} />}
-        </View>
+      {picker && blocoSelecionado && Platform.OS !== "ios" && (
+        <DateTimePicker
+          value={minParaData(blocoSelecionado[picker.campo])}
+          mode="time"
+          is24Hour
+          display="default"
+          onChange={(_evento, valor) => {
+            setPicker(null);
+            if (valor) onAtualizarBloco(picker.diaSemana, picker.indice, picker.campo, dataParaMin(valor));
+          }}
+        />
       )}
+
+      {/* No Android o DateTimePicker já abre como diálogo nativo (não
+          precisa de modal próprio). No iOS o modo "spinner" é inline — sem
+          um Modal, ele renderizava no fim da lista de dias, longe de onde
+          a pessoa tocou, dando a impressão de que a alteração era em outro
+          lugar. */}
+      <Modal visible={!!(picker && blocoSelecionado) && Platform.OS === "ios"} transparent animationType="fade" onRequestClose={() => setPicker(null)}>
+        <Pressable style={s.modalFundo} onPress={() => setPicker(null)}>
+          <Pressable style={s.pickerCaixa} onPress={(e) => e.stopPropagation()}>
+            {picker && blocoSelecionado && (
+              <DateTimePicker
+                value={minParaData(blocoSelecionado[picker.campo])}
+                mode="time"
+                is24Hour
+                display="spinner"
+                onChange={(_evento, valor) => {
+                  if (valor) onAtualizarBloco(picker.diaSemana, picker.indice, picker.campo, dataParaMin(valor));
+                }}
+              />
+            )}
+            <BotaoPrimario texto="Pronto" onPress={() => setPicker(null)} />
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -111,5 +132,6 @@ const s = StyleSheet.create({
   removerTxt: { color: cores.vermelho, fontSize: 20, fontFamily: fontes.corpoNegrito },
   link: { color: cores.tinta, fontFamily: fontes.corpoNegrito, fontSize: 13, textDecorationLine: "underline", marginTop: 4, marginBottom: 8 },
   linkSecundario: { color: cores.sub, fontFamily: fontes.corpoSemi, marginTop: 2, marginBottom: 4, textDecorationLine: "underline" },
-  pickerCaixa: { backgroundColor: cores.card, borderRadius: raio.card, borderWidth: 1, borderColor: cores.linha, padding: 8, marginBottom: 12, alignItems: "center" },
+  modalFundo: { flex: 1, backgroundColor: "rgba(22,35,63,0.45)", alignItems: "center", justifyContent: "center", padding: 24 },
+  pickerCaixa: { backgroundColor: cores.card, borderRadius: raio.card, borderWidth: 1, borderColor: cores.linha, padding: 12, width: "100%", maxWidth: 340, alignItems: "center" },
 });

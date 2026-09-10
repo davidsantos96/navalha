@@ -29,6 +29,7 @@ export function useCriarBloqueio() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["agenda-dia"] });
+      queryClient.invalidateQueries({ queryKey: ["bloqueios"] });
     },
   });
 }

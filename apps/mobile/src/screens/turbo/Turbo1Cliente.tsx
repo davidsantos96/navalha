@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { cores, fontes, raio } from "../../theme";
 import type { Profissional } from "../../hooks/useProfissional";
 import { useBuscarClientes, useCriarCliente } from "../../hooks/useClientes";
@@ -45,7 +45,7 @@ export function Turbo1ClienteScreen({
   }
 
   return (
-    <View style={s.tela}>
+    <KeyboardAvoidingView style={s.tela} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScreenHeader titulo="Quem é o cliente?" onVoltar={() => nav.pop()} />
       <TurboProgress passo={1} />
       <ScrollView contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
@@ -88,7 +88,7 @@ export function Turbo1ClienteScreen({
           </Pressable>
         )}
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

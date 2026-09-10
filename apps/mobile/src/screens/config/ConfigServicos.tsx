@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { cores, fontes, raio } from "../../theme";
 import type { Profissional } from "../../hooks/useProfissional";
 import { useAtualizarServico, useCriarServico, useRemoverServico, useServicos } from "../../hooks/useServicos";
@@ -42,9 +42,9 @@ export function ConfigServicosScreen({ profissional, nav }: { profissional: Prof
   }
 
   return (
-    <View style={s.tela}>
+    <KeyboardAvoidingView style={s.tela} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScreenHeader titulo="Serviços" onVoltar={() => nav.pop()} />
-      <ScrollView contentContainerStyle={s.conteudo}>
+      <ScrollView contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
         <Text style={s.nota}>Serviço desativado some dos presets, mas o histórico continua.</Text>
         <MensagemErro texto={erro} />
         {(servicos.data ?? []).map((sv) => (
@@ -74,7 +74,7 @@ export function ConfigServicosScreen({ profissional, nav }: { profissional: Prof
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

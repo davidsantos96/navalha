@@ -29,13 +29,16 @@ export function ServicoItem({
   if (!editando) {
     return (
       <View style={[s.linha, interruptor && !interruptor.ativo && { opacity: 0.45 }]}>
-        <Pressable style={{ flex: 1 }} onPress={onEditar}>
-          <Text style={s.nome}>
-            {servico.nome} <Text style={s.lapis}>✎</Text>
-          </Text>
-          <Text style={s.meta}>
-            {servico.duracaoMin} min · {formatarCentavos(servico.precoCentavos)}
-          </Text>
+        <Pressable style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 10 }} onPress={onEditar}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.nome}>{servico.nome}</Text>
+            <Text style={s.meta}>
+              {servico.duracaoMin} min · {formatarCentavos(servico.precoCentavos)}
+            </Text>
+          </View>
+          <View style={s.lapisBotao}>
+            <Text style={s.lapis}>✎</Text>
+          </View>
         </Pressable>
         {interruptor ? <Interruptor ativo={interruptor.ativo} onToggle={interruptor.onToggle} /> : null}
       </View>
@@ -74,7 +77,8 @@ export function ServicoItem({
 const s = StyleSheet.create({
   linha: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: cores.card, borderWidth: 1.5, borderColor: cores.linha, borderRadius: raio.card, padding: 14, marginBottom: 9 },
   nome: { fontFamily: fontes.corpoNegrito, fontSize: 15, color: cores.tinta },
-  lapis: { color: cores.fraco, fontSize: 13, fontFamily: fontes.corpo },
+  lapisBotao: { width: 32, height: 32, borderRadius: 10, backgroundColor: cores.fundo, borderWidth: 1, borderColor: cores.linha, alignItems: "center", justifyContent: "center" },
+  lapis: { color: cores.tinta, fontSize: 15 },
   meta: { fontSize: 12.5, color: cores.sub, fontFamily: fontes.corpoSemi, marginTop: 2 },
   editorCartao: { backgroundColor: cores.card, borderWidth: 1.5, borderColor: cores.tinta, borderRadius: raio.card, padding: 14, marginBottom: 9 },
   input: { width: "100%", padding: 12, borderRadius: 12, borderWidth: 1.5, borderColor: cores.linha, backgroundColor: "#FAFBFC", fontSize: 15, color: cores.tinta, marginBottom: 8 },

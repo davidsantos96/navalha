@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { cores, fontes } from "../../theme";
 import type { Profissional } from "../../hooks/useProfissional";
 import { useExpedientes, useSalvarExpedientes } from "../../hooks/useExpedientes";
@@ -68,7 +68,9 @@ export function ConfigHorariosScreen({ profissional, nav }: { profissional: Prof
         <ExpedienteEditor dias={dias} onAlternarDia={alternarDia} onAtualizarBloco={atualizarBloco} onAdicionarBloco={adicionarBloco} onRemoverBloco={removerBloco} onCopiarParaDiasUteis={copiarParaDiasUteis} />
         <MensagemErro texto={erro} />
       </ScrollView>
-      <BotaoPrimario texto={salvar.isPending ? "Salvando…" : "Salvar horários"} onPress={salvarTudo} disabled={salvar.isPending} style={s.botaoRodape} />
+      <View style={s.rodape}>
+        <BotaoPrimario texto={salvar.isPending ? "Salvando…" : "Salvar horários"} onPress={salvarTudo} disabled={salvar.isPending} />
+      </View>
     </>
   );
 }
@@ -76,5 +78,5 @@ export function ConfigHorariosScreen({ profissional, nav }: { profissional: Prof
 const s = StyleSheet.create({
   conteudo: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 20, backgroundColor: cores.fundo },
   nota: { fontSize: 13, color: cores.sub, marginBottom: 12, lineHeight: 18 },
-  botaoRodape: { marginHorizontal: 20, marginBottom: 20 },
+  rodape: { paddingHorizontal: 20, paddingBottom: 20 },
 });

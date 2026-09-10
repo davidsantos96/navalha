@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { cores, fontes, raio } from "../../theme";
 import type { Profissional } from "../../hooks/useProfissional";
 import { useAtualizarBarbearia, useBarbearia } from "../../hooks/useBarbearia";
@@ -31,9 +31,9 @@ export function ConfigBarbeariaScreen({ profissional, nav }: { profissional: Pro
   if (barbearia.isLoading || !carregado) return <Carregando />;
 
   return (
-    <View style={s.tela}>
+    <KeyboardAvoidingView style={s.tela} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScreenHeader titulo="Barbearia" onVoltar={() => nav.pop()} />
-      <ScrollView contentContainerStyle={s.conteudo}>
+      <ScrollView contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
         <Text style={s.rotulo}>NOME</Text>
         <TextInput style={s.input} value={nome} onChangeText={setNome} onBlur={salvar} />
         <Text style={[s.rotulo, { marginTop: 18 }]}>ENDEREÇO (OPCIONAL)</Text>
@@ -44,7 +44,7 @@ export function ConfigBarbeariaScreen({ profissional, nav }: { profissional: Pro
           <Text style={s.notaTexto}>Endereço e telefone entram automaticamente nas mensagens de WhatsApp que o app monta.</Text>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { cores, fontes, raio } from "../../theme";
 import {
@@ -154,7 +154,7 @@ export function OnboardingScreen({ onConcluido }: { onConcluido: () => void }) {
   }
 
   return (
-    <View style={s.tela}>
+    <KeyboardAvoidingView style={s.tela} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScreenHeader titulo={TITULOS[passo]} onVoltar={passo > 0 ? () => setPasso((p) => p - 1) : undefined} />
       <Text style={s.passoTxt}>PASSO {passo + 1} DE 3</Text>
       <View style={s.dots}>
@@ -236,7 +236,7 @@ export function OnboardingScreen({ onConcluido }: { onConcluido: () => void }) {
       <View style={s.rodape}>
         <BotaoPrimario texto={passo === 2 ? "Começar a usar o Navalha" : "Continuar"} onPress={passo === 2 ? concluir : avancar} carregando={salvando} />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

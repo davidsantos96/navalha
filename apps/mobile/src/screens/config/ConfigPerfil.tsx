@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { cores, fontes, raio } from "../../theme";
 import type { Profissional } from "../../hooks/useProfissional";
 import { useAuth } from "../../hooks/useAuth";
@@ -28,9 +28,9 @@ export function ConfigPerfilScreen({ profissional, nav }: { profissional: Profis
   }
 
   return (
-    <View style={s.tela}>
+    <KeyboardAvoidingView style={s.tela} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScreenHeader titulo="Perfil e conta" onVoltar={() => nav.pop()} />
-      <ScrollView contentContainerStyle={s.conteudo}>
+      <ScrollView contentContainerStyle={s.conteudo} keyboardShouldPersistTaps="handled">
         <Text style={s.rotulo}>SEU NOME</Text>
         <TextInput style={s.input} value={nome} onChangeText={setNome} onBlur={salvarNome} />
         <Text style={[s.rotulo, { marginTop: 18 }]}>E-MAIL DE LOGIN</Text>
@@ -56,7 +56,7 @@ export function ConfigPerfilScreen({ profissional, nav }: { profissional: Profis
           </View>
         )}
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
