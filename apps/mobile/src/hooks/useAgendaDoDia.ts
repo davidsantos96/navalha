@@ -11,6 +11,8 @@ export interface ItemAgenda {
   status: StatusAgendamento;
   clienteId: string | null;
   clienteNome: string | null;
+  clienteTelefone: string | null;
+  servicoId: string | null;
   servicoNome: string | null;
   motivo: string | null;
   ehBloqueio: boolean;
@@ -32,8 +34,9 @@ interface LinhaAgendamento {
   fim: string;
   status: StatusAgendamento;
   cliente_id: string | null;
+  servico_id: string | null;
   motivo: string | null;
-  clientes: { nome: string } | null;
+  clientes: { nome: string; telefone: string } | null;
   servicos: { nome: string } | null;
 }
 
@@ -50,9 +53,9 @@ export function useAgendaDoDia(profissionalId: string | undefined, data: string 
       const [{ data: ags, error: e1 }, { data: exps, error: e2 }] = await Promise.all([
         supabase
           .from("agendamentos")
-          .select("id, inicio, fim, status, cliente_id, motivo, clientes(nome), servicos(nome)")
+          .select("id, inicio, fim, status, cliente_id, servico_id, motivo, clientes(nome, telefone), servicos(nome)")
           .eq("profissional_id", profissionalId)
-          .in("status", ["agendado", "concluido"])
+          .in("status", ["agendado", "concluido", "falta"])
           .gte("inicio", inicioDia)
           .lte("inicio", fimDia)
           .order("inicio") as unknown as { data: LinhaAgendamento[] | null; error: any },
@@ -72,6 +75,8 @@ export function useAgendaDoDia(profissionalId: string | undefined, data: string 
         status: a.status,
         clienteId: a.cliente_id,
         clienteNome: a.clientes?.nome ?? null,
+        clienteTelefone: a.clientes?.telefone ?? null,
+        servicoId: a.servico_id,
         servicoNome: a.servicos?.nome ?? null,
         motivo: a.motivo,
         ehBloqueio: a.cliente_id == null,
@@ -81,11 +86,15 @@ export function useAgendaDoDia(profissionalId: string | undefined, data: string 
       const diaAgenda: DiaAgenda = {
         data,
         expediente,
-        agendamentos: itens.map((i) => ({ id: i.id, inicio: i.inicio, fim: i.fim })),
+        // falta não ocupa espaço na constraint do banco nem na régua de
+        // espaços livres — só agendado/concluido/bloqueio (ver F2, §5.2).
+        agendamentos: itens.filter((i) => i.status !== "falta").map((i) => ({ id: i.id, inicio: i.inicio, fim: i.fim })),
       };
 
       const minutosExpediente = expediente.reduce((soma, b) => soma + (b.fim - b.inicio), 0);
-      const minutosOcupados = itens.reduce((soma, i) => soma + (i.fim - i.inicio), 0);
+      const minutosOcupados = itens
+        .filter((i) => i.status !== "falta")
+        .reduce((soma, i) => soma + (i.fim - i.inicio), 0);
 
       return {
         itens,

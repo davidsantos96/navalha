@@ -23,6 +23,7 @@ export interface ConfigSugestao {
   ancora?: "inicio" | "fim";  // onde compactar dia vazio, padrão "inicio"
   janelaCliente?: Intervalo;   // preferência do cliente (filtro), ex: {1080, 1440} = após 18h
   maxSugestoes?: number;       // padrão 3
+  maxPorDia?: number;          // padrão 2 (diversidade); ao restringir a busca a 1 dia, suba isso pra ver mais opções daquele dia
 }
 
 export type TipoSobra = "perfeito" | "util" | "morto";
@@ -189,12 +190,15 @@ export function sugerirHorarios(
 
   todas.sort((a, b) => b.pontos - a.pontos || a.data.localeCompare(b.data) || a.inicio - b.inicio);
 
-  // Diversidade: no máximo 2 sugestões do mesmo dia entre as top N
+  // Diversidade: no máximo `maxPorDia` sugestões do mesmo dia entre as top N
+  // (padrão 2; ao restringir a busca a um único dia, suba isso pra ver mais
+  // horários daquele dia em vez de só os 2 melhores).
+  const maxPorDia = cfg.maxPorDia ?? 2;
   const resultado: Sugestao[] = [];
   const porDia = new Map<string, number>();
   for (const s of todas) {
     const usado = porDia.get(s.data) ?? 0;
-    if (usado >= 2) continue;
+    if (usado >= maxPorDia) continue;
     resultado.push(s);
     porDia.set(s.data, usado + 1);
     if (resultado.length === max) break;
