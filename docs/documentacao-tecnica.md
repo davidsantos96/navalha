@@ -30,11 +30,13 @@ App de agenda para barbearias que inverte o modelo dominante do mercado (Booksy,
 | Motor de sugestão (`packages/agenda-inteligente`) | ✅ Completo e testado | TS puro, zero dependências, 13 testes passando (`npm test`) |
 | Schema do banco (Supabase/Postgres) | ✅ Completo | 7 migrations aplicadas (0001–0007) |
 | Telas do app mobile (MVP F1–F9) | ✅ Implementadas contra hooks reais | Branch `refino-visual-telas` já mesclada em `master`; ~40 arquivos em `apps/mobile/src` |
-| Identidade visual no app real | ✅ Aplicada | Fontes (Bricolage Grotesque + Figtree) carregadas em `App.tsx`; paleta em `theme.ts` |
-| Validação em produção | ❌ Pendente | Falta rodar contra projeto Supabase real e em aparelho físico |
-| Distribuição do piloto | ❌ Pendente | APK via `eas build` ainda não gerado |
+| Identidade visual no app real | ✅ Aplicada | Fontes (Bricolage Grotesque + Figtree), ícone e splash screen próprios (listra do poste), paleta revisada (ações primárias em azul — vermelho ficava lido como erro/alerta) |
+| Validação técnica (Supabase real + aparelho físico) | ✅ Concluída | Testado em Android e iPhone contra o Supabase de produção; 8 bugs reais encontrados e corrigidos (fuso horário nos agendamentos, faturamento não atualizava após concluir, código de acesso truncado em 6 dígitos, formatação de telefone do WhatsApp, teclado cobrindo inputs, layout estourando a tela, conteúdo por baixo da barra de status, bloqueio sem checar conflito com agendamento) |
+| Validação com barbearias piloto | ❌ Pendente | Ainda não testado por barbeiros fora do ciclo de desenvolvimento |
+| Distribuição do piloto (mecanismo) | ✅ Pronta | EAS configurado (`apps/mobile/eas.json`); builds Android (`preview`) já gerados e instalados via APK direto; iOS via túnel do Expo Go até ter conta Apple Developer |
+| Telemetria mínima (§4) | ❌ Pendente | Ainda não implementada no app — necessária antes do piloto valer como fonte de calibração |
 
-**Leitura estratégica:** o produto está tecnicamente pronto para piloto — o gargalo agora é validação com barbeiros reais, não engenharia.
+**Leitura estratégica:** a base técnica e a distribuição estão prontas e validadas em dispositivo real — o gargalo agora é colocar o app na mão de barbeiros de verdade e ligar a telemetria antes disso, não mais engenharia de fundação.
 
 ### 2.2 Motor de sugestão — `packages/agenda-inteligente/src/index.ts`
 
@@ -89,10 +91,10 @@ Navegação: pilha local simples (`AppShell.tsx`), sem lib de rotas externa.
 
 ### 2.5 O que falta para o piloto
 
-1. Validar todo o fluxo contra um projeto Supabase real (não só local/dev).
-2. Rodar em aparelho físico (não só simulador/Expo Go).
-3. Gerar APK via `eas build -p android --profile preview` e distribuir aos 3–5 barbeiros piloto.
-4. Ativar telemetria mínima (§4 abaixo) desde o primeiro uso — sem isso não há como calibrar o algoritmo depois.
+1. ~~Validar todo o fluxo contra um projeto Supabase real (não só local/dev).~~ ✅ Feito — testado ponta a ponta (login, agenda, turbo, faturamento, bloqueios, configurações) contra o Supabase de produção.
+2. ~~Rodar em aparelho físico (não só simulador/Expo Go).~~ ✅ Feito — Android (APK) e iPhone (túnel Expo Go).
+3. ~~Gerar APK via `eas build -p android --profile preview`.~~ ✅ Feito — build funcionando, ícone e splash próprios. **Falta:** distribuir de fato para os 3–5 barbeiros piloto e começar a coletar uso real.
+4. Ativar telemetria mínima (§4 abaixo) desde o primeiro uso — sem isso não há como calibrar o algoritmo depois. **Ainda não implementada.**
 
 ---
 
