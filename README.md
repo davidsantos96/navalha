@@ -1,18 +1,37 @@
-# Navalha — monorepo
+# Navalha
 
 App de agenda para barbearias que trabalha pelo barbeiro: sem buracos no dia,
 sem cliente sumido, sem sair do WhatsApp.
 
-**Leia primeiro:** `docs/spec.md` — a especificação completa do produto
-(visão, escopo do MVP, regras de negócio, dados, arquitetura, telas).
+Em vez de expor todos os horários livres pro cliente escolher (como a maioria
+dos apps de agendamento), o **barbeiro** controla a agenda — o app sugere só
+os horários que compactam o dia, direto na conversa do WhatsApp.
+
+| Mercado atual | Navalha |
+|---|---|
+| Agenda passiva — cliente escolhe entre todos os horários livres | Agenda ativa — algoritmo oferece só os horários que compactam o dia |
+| Otimiza a conveniência do cliente | Otimiza a receita/tempo do barbeiro |
+| Compete com o WhatsApp (app próprio de conversa) | Vive ao redor do WhatsApp (links `wa.me`, mensagens prontas) |
+| Buraco na agenda é um custo invisível | Buraco morto é visualizado (hachura vermelha) — vira argumento de venda |
+
+**Documentação completa:**
+- [`docs/spec.md`](docs/spec.md) — especificação do produto (visão, regras de negócio, dados, telas).
+- [`docs/documentacao-tecnica.md`](docs/documentacao-tecnica.md) — arquitetura, decisões técnicas, roadmap e riscos.
+
+## Estado atual
+
+Piloto em andamento em dispositivos reais — Android via APK (EAS Build) e iOS
+via túnel do Expo Go. As 9 telas do MVP (F1–F9) estão implementadas contra o
+Supabase real, com identidade visual própria (ícone, splash, tipografia
+Bricolage Grotesque + Figtree) e sem dependências pendentes de infraestrutura.
 
 ## Estrutura
 
 ```
 navalha/
-├─ docs/spec.md                     # fonte da verdade do produto
-├─ packages/agenda-inteligente/     # motor de sugestão (TS puro + 12 testes)
-├─ apps/mobile/                     # app Expo (esqueleto — veja setup abaixo)
+├─ docs/                            # spec do produto + doc técnica
+├─ packages/agenda-inteligente/     # motor de sugestão (TS puro + 13 testes)
+├─ apps/mobile/                     # app Expo/React Native
 └─ supabase/migrations/             # schema do banco (RLS + anti-conflito)
 ```
 
@@ -20,48 +39,28 @@ navalha/
 
 - Node.js 20+
 - Conta gratuita no [Supabase](https://supabase.com)
-- App **Expo Go** no celular (para desenvolvimento)
+- App **Expo Go** no celular (pra rodar sem gerar build nativo)
+- [EAS CLI](https://docs.expo.dev/eas/) (`npx eas-cli`) pra gerar APK/build de distribuição
 
 ## Setup
 
-### 1. Instalar e testar o motor
+### 1. Instalar dependências e rodar os testes do motor
 
 ```bash
 npm install
-npm test        # 12 testes do algoritmo devem passar
+npm test        # 13 testes de packages/agenda-inteligente devem passar
 ```
 
 ### 2. Criar o backend
 
-1. Crie um projeto no Supabase.
-2. No SQL Editor, execute as migrações de `supabase/migrations/` **em ordem** (0001 a 0007).
-3. Em Authentication → Providers, habilite **Email** (link mágico) e customize o template "Magic Link" para incluir `{{ .Token }}` (por padrão só vem um link, sem código de 6 dígitos). Telefone/OTP fica para depois (tem custo de SMS).
+1. Crie um projeto no [Supabase](https://supabase.com).
+2. No SQL Editor, rode as migrações de `supabase/migrations/` **em ordem** (0001 a 0007).
+3. Em Authentication → Providers, habilite **Email** (link mágico) e customize
+   o template "Magic Link" pra incluir `{{ .Token }}` — por padrão o e-mail só
+   traz um link, sem código. O tamanho do código (6, 8 dígitos etc.) depende
+   da configuração de OTP do projeto; a tela de login aceita qualquer tamanho.
 
-### 3. Completar o app Expo
-
-O diretório `apps/mobile` traz o código-fonte (`src/`, `App.tsx`) mas **não fixa
-versões do Expo** — elas mudam rápido demais para um scaffold congelado.
-Gere a base oficial e traga o código por cima:
-
-```bash
-# na raiz do monorepo
-npx create-expo-app@latest apps/mobile-base --template blank-typescript
-# copie de apps/mobile-base para apps/mobile: package.json, app.json,
-# babel.config.js e demais arquivos de config (NÃO sobrescreva src/ nem App.tsx)
-# depois remova apps/mobile-base
-
-cd apps/mobile
-npx expo install @supabase/supabase-js @tanstack/react-query
-```
-
-No `package.json` do mobile, garanta o nome `"mobile"` e adicione a dependência
-do workspace:
-
-```json
-"dependencies": {
-  "@navalha/agenda-inteligente": "*"
-}
-```
+### 3. Configurar o app mobile
 
 Crie `apps/mobile/.env`:
 
@@ -70,35 +69,28 @@ EXPO_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=sua-anon-key
 ```
 
-### 4. Rodar
+### 4. Rodar em desenvolvimento
 
 ```bash
 npm run mobile     # abre o Expo; escaneie o QR com o Expo Go
 ```
 
-## O que já está pronto vs. o que falta
-
-Refino visual completo (branch `refino-visual-telas`): todas as telas do MVP
-(F1–F9) implementadas contra os hooks reais, com a identidade visual do
-protótipo (Bricolage Grotesque + Figtree, paleta do poste, linha do tempo
-hachurada). Falta essencialmente validar contra um projeto Supabase real e
-rodar num aparelho.
-
-| Pronto | Observação |
-|--------|------------|
-| Motor de sugestão testado (13 testes) | `packages/agenda-inteligente` — `maxPorDia` configurável (novo) |
-| Schema com RLS multi-tenant, constraint anti-conflito, bloqueios, reencaixe, faturamento | migrações 0001–0007 (0006/0007 novas: contato da barbearia, exclusão de conta) |
-| Onboarding (F1), Login | restilizados, mesma lógica/RPC de antes |
-| Agenda do dia (F2) | linha do tempo, ocupação, buracos mortos, faturamento, sheet de ações |
-| Fluxo turbo (F3/F4) + Reagendar | `Turbo1Cliente` → `Turbo2Servico` → `Turbo3Sugestoes` → `TurboConfirmar` |
-| Retornos (F6) | `RetornosScreen`, WhatsApp com melhores horários calculados na hora |
-| Reencaixe pós-cancelamento (F7) | dica no sheet ao cancelar, se houver cliente de retorno compatível |
-| Painel de faturamento (F8) | tela dedicada (por dia / por serviço), além dos cards da Agenda |
-| Bloqueios (F9) | `ConfigBloqueiosScreen` |
-| Configurações completas | Perfil (+ excluir conta), Barbearia, Serviços (CRUD), Horários, Algoritmo, Ajuda |
-| Navegação | pilha local simples (`src/navigation/AppShell.tsx`) — sem lib de rotas nova |
+Pra testar num iPhone sem Mac/conta Apple Developer, use o modo túnel
+(`npx expo start --tunnel` dentro de `apps/mobile`) — o Expo Go conecta pela
+internet, sem precisar da mesma rede Wi-Fi.
 
 ## Distribuição do piloto
 
-Android por APK direto (sem loja): `npx eas build -p android --profile preview`
-gera um link de instalação. Detalhes na spec §6.6.
+Build via EAS (perfis já configurados em `apps/mobile/eas.json`):
+
+```bash
+cd apps/mobile
+npx eas-cli build --platform android --profile preview   # APK direto, sem loja
+```
+
+As variáveis de ambiente do build (`EXPO_PUBLIC_SUPABASE_URL`/`ANON_KEY`)
+ficam nos ambientes `preview`/`production` do projeto EAS, não no `.env`
+local — configure com `eas env:set` antes do primeiro build.
+
+iOS exige conta Apple Developer (US$ 99/ano) pra gerar build de distribuição;
+até lá, o teste em iPhone é feito via túnel do Expo Go.
